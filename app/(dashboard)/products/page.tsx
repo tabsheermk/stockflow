@@ -125,9 +125,7 @@ export default function ProductsPage() {
               <tbody>
                 {filtered.map((p) => {
                   const isLow =
-                    p.lowStock !== undefined &&
-                    p.lowStock !== null &&
-                    p.quantity <= p.lowStock;
+                    p.lowStock !== undefined && p.quantity <= p.lowStock;
 
                   return (
                     <tr key={p.id} className="border-t">
@@ -151,7 +149,7 @@ export default function ProductsPage() {
                       </td>
 
                       <td className="px-6 py-4">
-                        {isLow ? (
+                        {isLow || p.lowStock === null ? (
                           <span className="text-red-600 text-xs">LOW</span>
                         ) : (
                           <span className="text-green-700 text-xs">OK</span>
