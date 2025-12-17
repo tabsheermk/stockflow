@@ -14,7 +14,10 @@ export async function GET() {
 
     return NextResponse.json(products);
   } catch {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return NextResponse.json(
+      { error: "Unauthorized: Invalid or missing token" },
+      { status: 401 }
+    );
   }
 }
 
@@ -50,7 +53,10 @@ export async function POST(req: Request) {
     return NextResponse.json(product, { status: 201 });
   } catch (e: any) {
     if (e.message === "Unauthorized") {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json(
+        { error: "Unauthorized: Invalid or missing token" },
+        { status: 401 }
+      );
     }
     if (e.code === "P2002") {
       // This is prisma specific error code for unique constraint violation
