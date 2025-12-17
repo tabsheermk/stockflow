@@ -29,7 +29,7 @@ export async function GET() {
 
     const lowStockProducts = products
       .map((p) => {
-        const threshold = p.lowStock ?? defaultThreshold;
+        const threshold = Math.min(p.lowStock || 0, defaultThreshold);
         return {
           ...p,
           effectiveLowStock: threshold,
