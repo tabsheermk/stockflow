@@ -86,7 +86,9 @@ export default function SignupPage() {
 
       {error && <p className="text-red-600 text-sm">{error}</p>}
 
-      <button className="w-full bg-black text-white p-2">Sign up</button>
+      <button className="w-full bg-black text-white p-2 cursor-pointer">
+        Sign up
+      </button>
       <span>
         Already have an account?{" "}
         <Link href="/login" className="text-blue-600 hover:underline">
