@@ -59,7 +59,7 @@ export default function SettingsPage() {
               </p>
             </div>
 
-            <button className="bg-black text-white px-4 py-2 rounded">
+            <button className="bg-black text-white px-4 py-2 rounded cursor-pointer">
               Save
             </button>
 
