@@ -61,7 +61,9 @@ export default function ProductForm({
         </div>
       ))}
 
-      <button className="bg-black text-white px-4 py-2 rounded">Save</button>
+      <button className="bg-black text-white px-4 py-2 rounded cursor-pointer">
+        Save
+      </button>
     </form>
   );
 }

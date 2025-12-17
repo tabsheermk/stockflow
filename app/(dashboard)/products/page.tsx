@@ -19,10 +19,14 @@ type Product = {
 export default function ProductsPage() {
   const router = useRouter();
   const [products, setProducts] = useState<Product[]>([]);
+  const [filtered, setFiltered] = useState<Product[]>([]);
+  const [search, setSearch] = useState("");
 
   async function load() {
     const res = await apiFetch("/api/products");
-    setProducts(await res.json());
+    const data = await res.json();
+    setProducts(data);
+    setFiltered(data);
   }
 
   useEffect(() => {
@@ -43,29 +47,66 @@ export default function ProductsPage() {
     const product = products.find((p) => p.id === id);
     if (!product) return;
 
+    const newQty = product.quantity + delta;
+    if (newQty < 0) return;
+
     await apiFetch(`/api/products/${id}`, {
       method: "PUT",
-      body: JSON.stringify({
-        quantity: product.quantity + delta,
-      }),
+      body: JSON.stringify({ quantity: newQty }),
     });
 
     load();
   }
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      if (!search.trim()) {
+        setFiltered(products);
+        return;
+      }
+
+      const q = search.toLowerCase();
+      setFiltered(
+        products.filter(
+          (p) =>
+            p.name.toLowerCase().includes(q) || p.sku.toLowerCase().includes(q)
+        )
+      );
+    }, 300); // debounce delay
+
+    return () => clearTimeout(handler);
+  }, [search, products]);
 
   return (
     <>
       <Navbar />
       <main className="p-6 bg-gray-50 min-h-screen">
         <div className="max-w-6xl mx-auto space-y-6">
-          <div className="flex justify-between items-center">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <h1 className="text-2xl font-semibold">Products</h1>
-            <Link
-              href="/products/new"
-              className="bg-black text-white px-4 py-2 rounded"
-            >
-              Add Product
-            </Link>
+
+            <div className="flex items-center gap-3">
+              <div className="relative">
+                <input
+                  placeholder="Search products..."
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  className="w-64 pl-9 pr-3 py-2 border rounded-md text-sm
+                   focus:outline-none focus:ring-2 focus:ring-black/20"
+                />
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">
+                  🔍
+                </span>
+              </div>
+
+              <Link
+                href="/products/new"
+                className="bg-black text-white px-4 py-2 rounded-md text-sm
+                 hover:bg-black/90"
+              >
+                Add Product
+              </Link>
+            </div>
           </div>
 
           <div className="bg-white border rounded-lg overflow-x-auto">
@@ -82,7 +123,7 @@ export default function ProductsPage() {
               </thead>
 
               <tbody>
-                {products.map((p) => {
+                {filtered.map((p) => {
                   const isLow =
                     p.lowStock !== undefined && p.quantity <= p.lowStock;
 
